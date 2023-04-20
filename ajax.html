@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script
+      src="https://code.jquery.com/jquery-3.6.4.js">
+    </script>
+</head>
+<body>
+    <input type="button" id="btn1" value="js-ajax run">
+    <div id="result" style="border: 1px solid red;">bin</div>
+
+    <script>
+        let btn1 = document.querySelector("#btn1")
+        btn1.addEventListener("click", function(){
+
+            // ajax 각체 생성
+            const xhr = new XMLHttpRequest();
+
+            // 보낼 준비
+            let url = "https://cors-anywhere.herokuapp.com/http://naver.com";
+            xhr.open("GET", url);    // 전달인자 GET, POST // url
+
+            // 실행을 지시 (단, 언제 끝날지 모름)
+            xhr.send();                 // == submit, POST방식이면 여기에 전달인자 입력(ajax 방식)              
+
+            // 다녀오는게 끝났을때 (응답 이후)
+            xhr.onload = function(){
+                console.log(xhr.responseText)
+
+                let result = document.querySelector("#result");
+                // result.innerText = xhr.responseText
+                result.innerHTML = xhr.responseText
+            }
+        })
+    </script>
+    <hr>
+    jQuery로 ajax 실행<br>
+    <input type="button" id="btn2" value="jq-ajax run">
+    <script>
+        // dom 확보
+        // 이벤트 바인딩
+        /*dom확보*//*이벤트제거*//*이벤트 바인딩*/
+        $("#btn2").off("click").on("click", function(){
+            // ajax 실행
+            let option = {
+                "url": "https://cors-anywhere.herokuapp.com/http://naver.com",
+                "type": "get",
+                "success": function(data){
+                    console.log(data);
+
+                },
+                "error": function(data){
+                    console.log(data)
+                },
+                "complete" : function(data){
+                    console.log("end")
+                }
+            }
+            $.ajax(option);
+
+            let option2 = {
+                "url": "https://cors-anywhere.herokuapp.com/http://naver.com",
+                "type": "get"
+            }
+            $.ajax(option2)
+            .done(function(data){
+                console.log(data);
+                let result = document.querySelector("#result");
+                result.innerHTML = data
+            })
+            .fail()
+            .always(function(data){
+                console.log("The end")
+            })
+        })  
+        
+
+       
+
+
+    </script>
+</body>
+</html>

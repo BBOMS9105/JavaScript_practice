@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- http://openapi.seoul.go.kr:8088/4e5047535762626f3131396359437955/json/DailyAverageCityAir/1/5/20230420/서남권/영등포구 -->
+
+    <!-- 
+        To do : 
+        버튼을 만들고
+        ajax로 공공데이터(대기) 정보를 가져온다
+        가져온 정보를 표시한다
+        날짜, 권역, 측정소명
+     -->
+     날짜 : <input type="text" id="date"> 형식 : YYYYMMDD<br>
+     권역 : <select id="region">
+                <option value="도심권">도심권</option>
+                <option value="서북권">서북권</option>
+                <option value="동북권">동북권</option>
+                <option value="서남권">서남권</option>
+                <option value="동남권">동남권</option>
+            </select>
+     <!-- 권역 :  <input type="text" id="region"><br> -->
+     측정소 : <select id="station">
+                <option value="중구">중구</option>
+                <option value="종로구">종로구</option>
+                <option value="용산구">용산구</option>
+                <option value="은평구">은평구</option>
+                <option value="서대문구">서대문구</option>
+                <option value="마포구">마포구</option>
+                <option value="광진구">광진구</option>
+                <option value="성동구">성동구</option>
+                <option value="강서구">강서구</option>
+                <option value="구로구">구로구</option>
+                <option value="영등포구">영등포구</option>
+                <option value="강남구">강남구</option>
+                <option value="서초구">서초구</option>
+                <option value="송파구">송파구</option>
+              </select>
+     <input type="button" id="getInfo" value="가져오기">
+     <hr>
+     <div id="info">
+        <style>
+            th, td {
+                border: 1px solid black;
+                padding: 10px;
+            }
+        </style>
+        <table>
+            <thead>
+                <th>항목</th>
+                <th>내용</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="2">
+                        표시할 내용이 없습니다.
+                    </td>
+                </tr>
+                <!-- <tr>               // javascript로 table을 생성해서 덮어씌울거임
+                    <td>미세먼지</td>
+                    <td>22.0</td>
+                </tr>
+                <tr>
+                    <td>
+
+                    </td>
+                </tr> -->
+            </tbody>
+        </table>
+        <hr>
+        <!-- 권역명, 측정소 table 접어둠 -->
+        <table>
+            <thead>
+                <th>권역명</th>
+                <th>측정소</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>도심권</td>
+                    <td>중구</td>
+                </tr>
+                <tr>
+                    <td>도심권</td>
+                    <td>종로구</td>
+                </tr>
+                <tr>
+                    <td>도심권</td>
+                    <td>용산구</td>
+                </tr>
+                <tr>
+                    <td>서북권</td>
+                    <td>은평구</td>
+                </tr>
+                <tr>
+                    <td>서북권</td>
+                    <td>서대문구</td>
+                </tr>
+                <tr>
+                    <td>서북권</td>
+                    <td>마포구</td>
+                </tr>
+                <tr>
+                    <td>동북권</td>
+                    <td>광진구</td>
+                </tr>
+                <tr>
+                    <td>동북권</td>
+                    <td>성동구</td>
+                </tr>
+                <tr>
+                    <td>서남권</td>
+                    <td>강서구</td>
+                </tr>
+                <tr>
+                    <td>서남권</td>
+                    <td>구로구</td>
+                </tr>
+                <tr>
+                    <td>서남권</td>
+                    <td>영등포구</td>
+                </tr>
+                <tr>
+                    <td>동남권</td>
+                    <td>강남구</td>
+                </tr>
+                <tr>
+                    <td>동남권</td>
+                    <td>서초구</td>
+                </tr>
+                <tr>
+                    <td>동남권</td>
+                    <td>송파구</td>
+                </tr>
+            </tbody>
+        </table>
+     </div>
+     <script>
+        const stationData = {
+        '도심권': ['중구', '종로구', '용산구'],
+        '서북권': ['은평구', '마포구', '서대문구'],
+        '동북권': ['광진구', '성동구', '강북구'],
+        '서남권': ['영등포구', '구로구', '강서구'],
+        '동남권': ['서초구', '강동구', '송파구']
+        };
+        let text = document.querySelector("#date")
+        let select1 = document.querySelector("#region")
+        let select2 = document.querySelector("#station")
+        let btn1 = document.querySelector("#getInfo")
+
+        select1.addEventListener('change', function() {
+            const selectedRegion = select1.value;
+            const stations = stationData[selectedRegion];
+  
+            for (let i = 0; i < select2.options.length; i++) {
+                if (stations.includes(select2.options[i].value)) {
+                  select2.options[i].style.display = "";
+                } else {
+            select2.options[i].style.display = "none";
+             }
+        }
+
+         select2.selectedIndex = 0;
+        });
+
+
+
+        btn1.addEventListener("click", function(){
+
+            // ajax 객체 생성
+            const xhr = new XMLHttpRequest();
+
+            // 보낼 준비
+            let url = "http://openapi.seoul.go.kr:8088/4e5047535762626f3131396359437955/json/DailyAverageCityAir/1/5/"+ text.value +"/"+ select1.value + "/" + select2.value;
+            xhr.open("GET", url);    // 전달인자 GET, POST // url
+
+            // 실행을 지시 (단, 언제 끝날지 모름)
+            xhr.send();                 // == submit, POST방식이면 여기에 전달인자 입력(ajax 방식)              
+
+            // 다녀오는게 끝났을때 (응답 이후)
+            xhr.onload = function(){
+                console.log(xhr.responseText);  // json형태로 변환 가능한 문자열
+
+                //JSON 사용법
+                // let a = {
+                //     "key" : "value",
+                //     "key2": "value2",
+                //     "key3": [1,2],
+                //     "key4": {
+                //          "key1-1" : "value"
+                //      }
+                // }
+                // 가져오는법
+                // a.key --> value
+                // a["key"]
+                // a.key4.key1-1
+                // a.["key4"]["key1-1"]
+                // 추가하는법(없으면 추가하고 있으면 덮어쓴다)
+                // a.key2 = "abc"
+
+                try{
+                let json_data = JSON.parse(xhr.responseText);
+                console.log(json_data)
+                let PM10 = json_data.DailyAverageCityAir.row[0].PM10
+                let PM25 = json_data.DailyAverageCityAir.row[0].PM25
+                let MSRDT_DE = json_data.DailyAverageCityAir.row[0].MSRDT_DE
+                let MSRRGN_NM = json_data.DailyAverageCityAir.row[0].MSRRGN_NM
+                let MSRSTE_NM = json_data.DailyAverageCityAir.row[0].MSRSTE_NM
+
+                let html = "";
+                html += '<tr>';
+                html +=     '<td>미세먼지</td>';
+                html +=     '<td>'+ PM10 +'</td>';
+                html += '</tr>';
+                html += '<tr>';
+                html +=     '<td>초미세먼지</td>';
+                html +=     '<td>'+ PM25 +'</td>';
+                html += '</tr>';
+                html += '<tr>';
+                html +=     '<td>날짜</td>';
+                html +=     '<td>'+ MSRDT_DE +'</td>';
+                html += '</tr>';
+                html += '<tr>';
+                html +=     '<td>권역</td>';
+                html +=     '<td>'+ MSRRGN_NM +'</td>';
+                html += '</tr>';
+                html += '<tr>';
+                html +=     '<td>측정소</td>';
+                html +=     '<td>'+ MSRSTE_NM +'</td>';
+                html += '</tr>';
+
+
+                document.querySelector("tbody").innerHTML = html;
+                } catch(e) {
+                    console.error(e)
+                }
+            }
+        })
+     </script>
+</body>
+</html>
